@@ -2,18 +2,18 @@
 import { useEffect, useRef, useState } from 'react';
 
 const heroNodes = [
-  { label: 'n8n', x: 0.13, y: 0.20, symbol: '⌁' },
-  { label: 'AI Agents', x: 0.36, y: 0.10, symbol: '◇' },
-  { label: 'API', x: 0.87, y: 0.20, symbol: '{ }' },
-  { label: 'CRM', x: 0.92, y: 0.53, symbol: '◎' },
-  { label: 'Webhooks', x: 0.08, y: 0.53, symbol: '⬡' },
-  { label: 'Database', x: 0.82, y: 0.82, symbol: '⬢' },
-  { label: 'OpenAI', x: 0.65, y: 0.10, symbol: '✦' },
-  { label: 'Email', x: 0.18, y: 0.82, symbol: '✉' },
-  { label: 'Workflow', x: 0.36, y: 0.91, symbol: '⌘' },
-  { label: 'Website', x: 0.64, y: 0.91, symbol: '▣' },
-  { label: 'Automation', x: 0.23, y: 0.49, symbol: '↗' },
-  { label: 'Dashboard', x: 0.77, y: 0.49, symbol: '▦' }
+  { label: 'OpenAI', x: 0.10, y: 0.28, symbol: '◈', group: 'input' },
+  { label: 'Claude', x: 0.10, y: 0.50, symbol: '✳', group: 'input' },
+  { label: 'Gemini', x: 0.10, y: 0.72, symbol: '✦', group: 'input' },
+  { label: 'Memory', x: 0.36, y: 0.10, symbol: '◉', group: 'capability' },
+  { label: 'Tools', x: 0.50, y: 0.08, symbol: '⚒', group: 'capability' },
+  { label: 'Vector Store', x: 0.64, y: 0.10, symbol: '▤', group: 'capability' },
+  { label: 'Slack', x: 0.90, y: 0.20, symbol: '⌗', group: 'output' },
+  { label: 'CRM', x: 0.90, y: 0.35, symbol: '◎', group: 'output' },
+  { label: 'Database', x: 0.90, y: 0.50, symbol: '⬢', group: 'output' },
+  { label: 'Email', x: 0.90, y: 0.65, symbol: '✉', group: 'output' },
+  { label: 'API', x: 0.90, y: 0.80, symbol: '{ }', group: 'output' },
+  { label: 'Execute', x: 0.50, y: 0.91, symbol: '↗', group: 'action' }
 ];
 
 const toolkitNodes = [
@@ -75,19 +75,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         const connection = 0.2 + scroll * 0.8;
 
         const dark = true;
-        const orbitColor = dark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(86, 107, 138, 0.10)';
         const restingLine = dark ? 'rgba(255, 255, 255, 0.09)' : 'rgba(106, 121, 145, 0.20)';
-
-        // Draw orbital rings (very subtle)
-        ctx.beginPath();
-        ctx.arc(cx, cy, width * 0.28, 0, Math.PI * 2);
-        ctx.strokeStyle = orbitColor;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, width * 0.42, 0, Math.PI * 2);
-        ctx.stroke();
 
         // Draw connections
         for (let j = 0; j < nodes.length; j++) {
@@ -163,15 +151,15 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
             <path d="M2 12l10 5 10-5" />
           </svg>
         </span>
-        <strong>Sabbit</strong>
-        <small>{toolkit ? 'AUTOMATION ENGINEER' : 'AI AUTOMATION CORE'}</small>
+        <strong>{toolkit ? 'Sabbit' : 'n8n'}</strong>
+        <small>{toolkit ? 'AUTOMATION ENGINEER' : 'AI AGENT'}</small>
       </button>
 
       {/* External Nodes */}
       {nodes.map((n, i) => (
         <button
           key={n.label}
-          className={`flow-node ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
+          className={`flow-node ${'group' in n ? `node-${n.group}` : ''} ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
           style={{ left: n.x * 100 + '%', top: n.y * 100 + '%', '--node-delay': `${.5 + i * .055}s` } as React.CSSProperties}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered(-1)}
@@ -190,11 +178,11 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         {active >= 0 ? (
           <>
             <span className="status-dot" />
-            {nodes[active].label} → {toolkit ? 'Sabbit' : 'CoAgent'} → Automated workflow
+            {nodes[active].label} → {toolkit ? 'Sabbit' : 'n8n AI Agent'} → Automated action
           </>
         ) : (
           <>
-            <span className="status-dot" /> Connected tools → intelligent automation → business action
+            <span className="status-dot" /> AI models → n8n agent → connected business action
           </>
         )}
       </div>

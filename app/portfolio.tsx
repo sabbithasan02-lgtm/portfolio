@@ -73,6 +73,8 @@ const tools = [
   'TypeScript', 'Next.js', 'Python'
 ];
 
+const marqueeBrands = ['n8n', 'OpenAI', 'Claude', 'Supabase', 'PostgreSQL', 'Google Sheets', 'Notion', 'Slack', 'Gmail', 'Python', 'Next.js'];
+
 const brandLogos: Record<string, string> = {
   'n8n': '/brands/n8n.svg',
   'OpenAI': '/brands/openai.svg',
@@ -261,13 +263,20 @@ export default function Portfolio() {
         </section>
 
         {/* ===== TECH MARQUEE ===== */}
-        <div className="tool-strip reveal-target">
-          <span>TURNING COMPLEXITY INTO FLOW</span>
-          <span className="tool-strip-brand"><BrandLogo name="n8n" size={20} />n8n</span>
-          <span className="tool-strip-brand"><BrandLogo name="OpenAI" size={20} />OpenAI</span>
-          <span>API Integrations</span>
-          <span className="tool-strip-brand"><BrandLogo name="Supabase" size={20} />Supabase</span>
-          <span>Intelligent Workflows</span>
+        <div className="tool-strip reveal-target" aria-label="AI and automation tools">
+          <div className="tool-strip-track">
+            {[0, 1].map(copy => (
+              <div className="tool-strip-group" aria-hidden={copy === 1} key={copy}>
+                <span className="tool-strip-intro">TURNING COMPLEXITY INTO FLOW</span>
+                {marqueeBrands.map(name => (
+                  <span className="tool-strip-brand" key={`${copy}-${name}`}><BrandLogo name={name} size={20} />{name}</span>
+                ))}
+                <span className="tool-strip-text">AI AGENTS</span>
+                <span className="tool-strip-text">API INTEGRATIONS</span>
+                <span className="tool-strip-text">INTELLIGENT WORKFLOWS</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* ===== ABOUT SECTION ===== */}

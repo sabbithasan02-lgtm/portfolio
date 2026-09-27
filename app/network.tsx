@@ -1,5 +1,16 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+
+const nodeLogos: Record<string, string> = {
+  OpenAI: '/brands/openai.svg',
+  Claude: '/brands/claude.svg',
+  Slack: '/brands/slack.svg',
+  Email: '/brands/gmail.svg',
+  Database: '/brands/postgresql.svg'
+};
+
+const nodeSlug = (label: string) => label.toLowerCase().replace(/\s+/g, '-');
 
 const heroNodes = [
   { label: 'OpenAI', x: 0.10, y: 0.28, symbol: '◈', group: 'input' },
@@ -145,11 +156,13 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         aria-label="Show all workflow connections"
       >
         <span className="core-symbol">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
+          {toolkit ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          ) : <Image className="network-brand-icon" src="/brands/n8n.svg" alt="" aria-hidden="true" width={28} height={28} />}
         </span>
         <strong>{toolkit ? 'Sabbit' : 'n8n'}</strong>
         <small>{toolkit ? 'AUTOMATION ENGINEER' : 'AI AGENT'}</small>
@@ -159,7 +172,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
       {nodes.map((n, i) => (
         <button
           key={n.label}
-          className={`flow-node ${'group' in n ? `node-${n.group}` : ''} ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
+          className={`flow-node node-${nodeSlug(n.label)} ${'group' in n ? `node-${n.group}` : ''} ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
           style={{ left: n.x * 100 + '%', top: n.y * 100 + '%', '--node-delay': `${.5 + i * .055}s` } as React.CSSProperties}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered(-1)}
@@ -168,7 +181,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
           onClick={() => setSelected(i)}
           aria-label={`Explore ${n.label} connection`}
         >
-          <span>{n.symbol}</span>
+          <span>{nodeLogos[n.label] ? <Image className="network-brand-icon" src={nodeLogos[n.label]} alt="" aria-hidden="true" width={24} height={24} /> : n.symbol}</span>
           <small>{n.label}</small>
         </button>
       ))}

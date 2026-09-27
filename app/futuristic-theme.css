@@ -814,6 +814,73 @@ html, body { max-width: 100%; overflow-x: clip; }
   .toolkit > .network-shell .network { height: 410px; }
 }
 
+/* Continuous brand rail */
+.tool-strip {
+  display: block;
+  padding: 0;
+  min-height: 92px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.tool-strip-track {
+  display: flex;
+  width: max-content;
+  animation: brand-rail 34s linear infinite;
+}
+.tool-strip-group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 42px;
+  min-height: 92px;
+  padding: 0 21px;
+}
+.tool-strip-intro,
+.tool-strip-text {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-family: ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  color: #688393;
+}
+.tool-strip-intro { color: #22d3ee; }
+.tool-strip-brand { flex: 0 0 auto; white-space: nowrap; }
+.tool-strip:hover .tool-strip-track { animation-play-state: paused; }
+@keyframes brand-rail { to { transform: translateX(-50%); } }
+
+.network-brand-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(80%) sepia(36%) saturate(1221%) hue-rotate(147deg) brightness(103%) contrast(95%);
+}
+.core-symbol .network-brand-icon { width: 29px; height: 29px; }
+
+@media (max-width: 760px) {
+  .tool-strip-track { animation-duration: 24s; }
+  .tool-strip-group { gap: 28px; min-height: 78px; padding-inline: 14px; }
+  .tool-strip { min-height: 78px; }
+  .tool-strip-brand { font-size: 10px; gap: 7px; }
+  .tool-strip-brand .brand-logo { width: 17px; height: 17px; }
+
+  .personal-hero .hero-network .flow-node { display: flex !important; }
+  .personal-hero .hero-network .node-capability,
+  .personal-hero .hero-network .node-crm,
+  .personal-hero .hero-network .node-api { display: none !important; }
+  .personal-hero .hero-network .node-openai { left: 13% !important; top: 29% !important; }
+  .personal-hero .hero-network .node-claude { left: 13% !important; top: 50% !important; }
+  .personal-hero .hero-network .node-gemini { left: 13% !important; top: 71% !important; }
+  .personal-hero .hero-network .node-slack { left: 87% !important; top: 29% !important; }
+  .personal-hero .hero-network .node-database { left: 87% !important; top: 50% !important; }
+  .personal-hero .hero-network .node-email { left: 87% !important; top: 71% !important; }
+  .personal-hero .hero-network .node-execute { left: 50% !important; top: 89% !important; }
+  .personal-hero .hero-network .flow-node > small { max-width: 66px; font-size: 7px; }
+  .personal-hero .hero-network .node-readout { bottom: -2px; max-width: 86%; text-align: center; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .glass-card, .project-card, .skill-card, .radyan-feature, .lab-space, .documentation, .tech-item, .log-row, .process-grid > article,
   .button, .nav-cta, .social-links a, .text-button, .nav a, .nav a::after { transition: none !important; transform: none !important; }
@@ -822,4 +889,5 @@ html, body { max-width: 100%; overflow-x: clip; }
   .hero-light::before, .hero-network .core-node, .hero-network .flow-node { animation: none !important; opacity: 1 !important; }
   .hero-light .network-shell, .hero-light .network { transform: none !important; transition: none !important; }
   .smart-header, .smart-header .nav, .smart-header .nav.open a, .personal-hero .hero-line-mask > span { animation: none !important; transition: none !important; transform: none !important; opacity: 1 !important; filter: none !important; }
+  .tool-strip-track { animation: none !important; }
 }

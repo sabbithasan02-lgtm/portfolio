@@ -141,7 +141,38 @@ export default function Portfolio() {
   const filtered = changelog.filter(x => filter === 'ALL' || x.categories.includes(filter));
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealTargets = Array.from(document.querySelectorAll<HTMLElement>('.reveal-target'));
+    let revealObserver: IntersectionObserver | undefined;
+
+    if (!reducedMotion) {
+      document.documentElement.classList.add('motion-ready');
+      revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const target = entry.target as HTMLElement;
+          target.style.setProperty('--reveal-opacity', '1');
+          target.style.setProperty('--reveal-offset', '0px');
+          revealObserver?.unobserve(entry.target);
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -8% 0px' });
+
+      revealTargets.forEach(target => {
+        const rect = target.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.94 && rect.bottom > 0) {
+          target.style.setProperty('--reveal-opacity', '1');
+          target.style.setProperty('--reveal-offset', '0px');
+        } else revealObserver?.observe(target);
+      });
+    }
+
+    if (reducedMotion || !window.matchMedia('(hover: hover)').matches) {
+      return () => {
+        revealObserver?.disconnect();
+        document.documentElement.classList.remove('motion-ready');
+      };
+    }
+
     const selector = '.glass-card,.project-card,.skill-card,.radyan-feature,.lab-space,.documentation,.tech-item,.log-row,.process-grid>article';
     const cards = Array.from(document.querySelectorAll<HTMLElement>(selector));
     const handlers = cards.map(card => {
@@ -153,7 +184,11 @@ export default function Portfolio() {
       card.addEventListener('pointermove', move);
       return { card, move };
     });
-    return () => handlers.forEach(({ card, move }) => card.removeEventListener('pointermove', move));
+    return () => {
+      handlers.forEach(({ card, move }) => card.removeEventListener('pointermove', move));
+      revealObserver?.disconnect();
+      document.documentElement.classList.remove('motion-ready');
+    };
   }, []);
 
   return (
@@ -229,7 +264,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== TECH MARQUEE ===== */}
-        <div className="tool-strip">
+        <div className="tool-strip reveal-target">
           <span>TURNING COMPLEXITY INTO FLOW</span>
           <span className="tool-strip-brand"><BrandLogo name="n8n" size={20} />n8n</span>
           <span className="tool-strip-brand"><BrandLogo name="OpenAI" size={20} />OpenAI</span>
@@ -239,7 +274,7 @@ export default function Portfolio() {
         </div>
 
         {/* ===== ABOUT SECTION ===== */}
-        <section className="wrap section intro about-section" id="about">
+        <section className="wrap section intro about-section reveal-target" id="about">
           <div className="section-label">01 / THE ENGINEER</div>
           <figure className="about-portrait">
             <Image
@@ -291,7 +326,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== SERVICES SECTION ===== */}
-        <section className="wrap section" id="services">
+        <section className="wrap section reveal-target" id="services">
           <div className="section-label">02 / SERVICES</div>
           <h2>What I can build<br />for you<span className="coral">.</span></h2>
           <div className="services-grid">
@@ -313,7 +348,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== RADYAN SECTION ===== */}
-        <section className="wrap section" id="radyan">
+        <section className="wrap section reveal-target" id="radyan">
           <div className="section-head">
             <div>
               <div className="section-label">03 / CURRENTLY BUILDING</div>
@@ -385,7 +420,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== FEATURED WORK ===== */}
-        <section className="wrap section" id="work">
+        <section className="wrap section reveal-target" id="work">
           <div className="section-head">
             <div>
               <div className="section-label">04 / SELECTED WORK</div>
@@ -399,7 +434,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== AUTOMATION WORKFLOW ===== */}
-        <section className="wrap section workflow-section">
+        <section className="wrap section workflow-section reveal-target">
           <div className="section-label">05 / HOW AUTOMATION WORKS</div>
           <h2>From trigger to <span className="coral">result</span></h2>
           <div className="workflow-diagram">
@@ -413,7 +448,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== HOW I WORK ===== */}
-        <section className="wrap section" id="process">
+        <section className="wrap section reveal-target" id="process">
           <div className="section-head">
             <div>
               <div className="section-label">06 / HOW I WORK</div>
@@ -436,7 +471,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== TECH STACK ===== */}
-        <section className="wrap section" id="stack">
+        <section className="wrap section reveal-target" id="stack">
           <div className="section-head">
             <div>
               <div className="section-label">07 / TECH STACK</div>
@@ -479,7 +514,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== EXPERIENCE ===== */}
-        <section className="wrap section experience-section">
+        <section className="wrap section experience-section reveal-target">
           <div className="section-label">08 / EXPERIENCE</div>
           <h2>Building in the real world<span className="coral">.</span></h2>
           {experience.map(x => (
@@ -500,7 +535,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== WHY AUTOMATION ===== */}
-        <section className="wrap section why-automation">
+        <section className="wrap section why-automation reveal-target">
           <h2>
             Manual work doesn't scale.<br />
             <span className="coral">Systems do.</span>
@@ -525,7 +560,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== BUILDING LOG ===== */}
-        <section className="wrap section" id="building">
+        <section className="wrap section reveal-target" id="building">
           <div className="section-head">
             <div>
               <div className="section-label">09 / THE BUILDING LOG</div>
@@ -561,7 +596,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== AUTOMATION LAB ===== */}
-        <section className="wrap section" id="lab">
+        <section className="wrap section reveal-target" id="lab">
           <div className="section-head">
             <div>
               <div className="section-label">10 / EXPLORATION</div>
@@ -590,7 +625,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== CONTACT CTA ===== */}
-        <section className="wrap section contact-cta">
+        <section className="wrap section contact-cta reveal-target">
           <h2>
             Have a process that<br />
             shouldn't be manual?<br />
@@ -602,7 +637,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== CONTACT SECTION ===== */}
-        <section className="wrap section contact-section" id="contact">
+        <section className="wrap section contact-section reveal-target" id="contact">
           <div className="contact-copy">
             <div className="section-label">LET'S CONNECT</div>
             <h2>Let's automate<br /><span className="coral">something useful.</span></h2>

@@ -7,13 +7,13 @@ const heroNodes = [
   { label: 'API', x: 0.87, y: 0.20, symbol: '{ }' },
   { label: 'CRM', x: 0.92, y: 0.53, symbol: '◎' },
   { label: 'Webhooks', x: 0.08, y: 0.53, symbol: '⬡' },
-  { label: 'Email', x: 0.82, y: 0.82, symbol: '✉' },
+  { label: 'Database', x: 0.82, y: 0.82, symbol: '⬢' },
   { label: 'OpenAI', x: 0.65, y: 0.10, symbol: '✦' },
-  { label: 'Database', x: 0.18, y: 0.82, symbol: '⬢' },
-  { label: 'WhatsApp', x: 0.36, y: 0.91, symbol: '◉' },
-  { label: 'Web Apps', x: 0.64, y: 0.91, symbol: '▣' },
-  { label: 'Lead Automation', x: 0.23, y: 0.49, symbol: '↗' },
-  { label: 'Data Processing', x: 0.77, y: 0.49, symbol: '▦' }
+  { label: 'Email', x: 0.18, y: 0.82, symbol: '✉' },
+  { label: 'Workflow', x: 0.36, y: 0.91, symbol: '⌘' },
+  { label: 'Website', x: 0.64, y: 0.91, symbol: '▣' },
+  { label: 'Automation', x: 0.23, y: 0.49, symbol: '↗' },
+  { label: 'Dashboard', x: 0.77, y: 0.49, symbol: '▦' }
 ];
 
 const toolkitNodes = [
@@ -74,7 +74,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         const scroll = Math.min(1, window.scrollY / 600);
         const connection = 0.2 + scroll * 0.8;
 
-        const dark = toolkit;
+        const dark = true;
         const orbitColor = dark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(86, 107, 138, 0.10)';
         const restingLine = dark ? 'rgba(255, 255, 255, 0.09)' : 'rgba(106, 121, 145, 0.20)';
 
@@ -109,7 +109,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
             const signal = ctx.createLinearGradient(cx, cy, nx, ny);
             signal.addColorStop(0, '#087BFF');
             signal.addColorStop(.55, '#39E6FF');
-            signal.addColorStop(1, '#796BFF');
+            signal.addColorStop(1, '#7DD3FC');
             ctx.strokeStyle = lit && cable === 0 ? signal : restingLine;
             ctx.globalAlpha = lit && cable === 0 ? .74 : (.38 + connection * .18);
             ctx.lineWidth = lit && cable === 0 ? 1.65 : .7;
@@ -119,14 +119,15 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
 
           // Only selected routes carry energy at any moment.
           if (!lit && activeRef.current !== j) continue;
-          const p = reduced ? 0.5 : ((t / (activeRef.current === j ? 1250 : 2200) + j * 0.13) % 1);
+          const phase = reduced ? 0.5 : ((t / (activeRef.current === j ? 1250 : 2200) + j * 0.13) % 1);
+          const p = j % 3 === 0 ? phase : 1 - phase;
           const inv = 1 - p;
           const px = inv * inv * inv * cx + 3 * inv * inv * p * (cx + (nx - cx) * 0.5) + 3 * inv * p * p * nx + p * p * p * nx;
           const py = inv * inv * inv * cy + 3 * inv * inv * p * cy + 3 * inv * p * p * (cy + (ny - cy) * 0.5) + p * p * p * ny;
 
           ctx.beginPath();
           ctx.arc(px, py, lit ? 3 : 2.5, 0, Math.PI * 2);
-          const pulseColors = ['#087BFF', '#39E6FF', '#796BFF'];
+          const pulseColors = ['#008CFF', '#39E6FF', '#7DD3FC'];
           ctx.fillStyle = pulseColors[j % pulseColors.length];
           ctx.shadowBlur = activeRef.current === j ? 16 : 10;
           ctx.shadowColor = pulseColors[j % pulseColors.length];
@@ -162,7 +163,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
             <path d="M2 12l10 5 10-5" />
           </svg>
         </span>
-        <strong>{toolkit ? 'Sabbit' : 'CoAgent'}</strong>
+        <strong>Sabbit</strong>
         <small>{toolkit ? 'AUTOMATION ENGINEER' : 'AI AUTOMATION CORE'}</small>
       </button>
 

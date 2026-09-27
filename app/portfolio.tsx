@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Network from './network';
 import SplitPill from './split-pill';
+import SmartNavbar from './smart-navbar';
 import ContactForm from './contact-form';
 import ProjectDetail from './project-detail';
 import { profile } from '@/data/profile';
@@ -215,46 +216,33 @@ export default function Portfolio() {
     <>
       <a className="skip" href="#main">Skip to content</a>
 
-      {/* ===== NAVIGATION - FLOATING GLASS BAR ===== */}
-      <header className="header">
-        <a href="#home" className="brand">
-          <Image className="brand-photo" src="/sabbit-ahamed-profile.png" alt="" aria-hidden="true" width={40} height={40} priority />
-          SABBIT<span className="brand-dot">.</span>
-        </a>
-        <nav aria-label="Main navigation" className={menu ? 'nav open' : 'nav'}>
-          {['Home', 'About', 'Services', 'Work', 'Process', 'Stack', 'Contact'].map(x => (
-            <a onClick={() => setMenu(false)} href={'#' + x.toLowerCase()} key={x}>{x}</a>
-          ))}
-        </nav>
-        <SplitPill href="#contact" className="split-pill--header" icon={<ArrowUpRight />}>Get in Touch</SplitPill>
-        <SplitPill className="split-pill--menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} onClick={() => setMenu(!menu)} icon={menu ? <X /> : <Menu />}>{menu ? 'Close' : 'Menu'}</SplitPill>
-      </header>
+      <SmartNavbar menu={menu} setMenu={setMenu} />
 
       <main id="main">
 
         {/* ===== HERO SECTION ===== */}
-        <section className="hero hero-light" id="home">
+        <section className="hero hero-light personal-hero" id="home">
           <div className="hero-top">
             <span className="eyebrow">
-              <i /> AI AUTOMATION ENGINEER · N8N EXPERT · VIBE CODER
+              <i /> SABBIT AHAMED · AI AUTOMATION · N8N · VIBE CODING
             </span>
           </div>
 
           <div className="hero-grid">
             <div className="hero-copy">
               <h1>
-                I Build AI Systems<br />
-                That Work While You Don’t.
+                <span className="hero-line-mask"><span>I Build Intelligent Systems</span></span>
+                <span className="hero-line-mask"><span>That Automate Real Work.</span></span>
               </h1>
               <p>
-                AI automation, intelligent workflows, integrations, and modern web experiences designed to turn repetitive work into scalable systems.
+                I design AI-powered automation systems, n8n workflows, integrations, and digital experiences that remove repetitive work and help businesses operate more efficiently.
               </p>
               <div className="hero-actions">
-                <SplitPill href="#work" variant="primary" icon={<ArrowUpRight />}>Explore My Work</SplitPill>
-                <SplitPill href="#contact" icon={<ArrowRight />}>Let’s Build Together</SplitPill>
+                <SplitPill href="#work" variant="primary" icon={<ArrowUpRight />}>View My Work</SplitPill>
+                <SplitPill href="#contact" icon={<ArrowRight />}>Let’s Talk</SplitPill>
               </div>
               <div className="current-status">
-                <span className="status-dot" /> Available for Automation Projects
+                <span className="status-dot" /> Available for selected projects
               </div>
             </div>
 
@@ -523,7 +511,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== EXPERIENCE ===== */}
-        <section className="wrap section experience-section reveal-target">
+        <section className="wrap section experience-section reveal-target" id="experience">
           <div className="section-label">08 / EXPERIENCE</div>
           <h2>Building in the real world<span className="coral">.</span></h2>
           {experience.map(x => (

@@ -500,13 +500,6 @@ export default function Portfolio() {
                 ))}
               </div>
             </div>
-            <div className="network-shell toolkit-network">
-              <div className="network-caption">
-                <span>TOOLS I WORK WITH</span>
-                <span>HOVER TO CONNECT ↗</span>
-              </div>
-              <Network toolkit />
-            </div>
           </div>
         </section>
 

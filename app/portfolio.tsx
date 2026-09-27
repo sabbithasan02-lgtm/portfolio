@@ -85,7 +85,9 @@ const brandLogos: Record<string, string> = {
   'JavaScript': '/brands/javascript.svg',
   'TypeScript': '/brands/typescript.svg',
   'Next.js': '/brands/nextjs.svg',
-  'Python': '/brands/python.svg'
+  'Python': '/brands/python.svg',
+  'LinkedIn': '/brands/linkedin.svg',
+  'Fiverr': '/brands/fiverr.svg'
 };
 
 const techIcons: { [key: string]: React.ReactNode } = {
@@ -321,7 +323,13 @@ export default function Portfolio() {
           </div>
           <div className="radyan-feature">
             <div className="radyan-wordmark">
-              R<span>Radyan</span>
+              <Image
+                className="radyan-logo"
+                src="/brands/radyan.png"
+                alt="Radyan"
+                width={400}
+                height={121}
+              />
               <small>BUSINESS AUTOMATION / E-COMMERCE OPERATIONS</small>
             </div>
             <div className="radyan-content">
@@ -608,7 +616,7 @@ export default function Portfolio() {
             </div>
             <div className="social-links">
               {profile.links.map(x => (
-                <a key={x.label} href={x.url} target="_blank" rel="noreferrer">{x.label} <ArrowUpRight size={15} /></a>
+                <a key={x.label} href={x.url} target="_blank" rel="noreferrer"><BrandLogo name={x.label} size={18} />{x.label} <ArrowUpRight size={15} /></a>
               ))}
               {profile.email && <a href={'mailto:' + profile.email}>Email <ArrowUpRight size={15} /></a>}
             </div>
@@ -629,7 +637,7 @@ export default function Portfolio() {
           <span>© 2026 Sabbit Ahamed · Built with automation in mind.</span>
           <div className="footer-links">
             {profile.links.map(x => (
-              <a key={x.label} href={x.url} target="_blank" rel="noreferrer">{x.label} ↗</a>
+              <a key={x.label} href={x.url} target="_blank" rel="noreferrer"><BrandLogo name={x.label} size={14} />{x.label} ↗</a>
             ))}
             <a href="#home">Back to top ↑</a>
           </div>

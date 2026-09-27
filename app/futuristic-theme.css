@@ -92,6 +92,10 @@ body {
 }
 
 .project-art, .radyan-wordmark, .lab-space, .filter-empty { background-color: rgba(3, 17, 27, .78); border-color: var(--border); }
+.radyan-logo { display: block; width: min(100%, 400px); height: auto; padding: 14px 18px; object-fit: contain; background: rgba(241, 250, 255, .94); border: 1px solid rgba(241, 250, 255, .72); border-radius: 14px; }
+.social-links a .brand-logo { width: 18px; height: 18px; }
+.footer-links a { display: inline-flex; align-items: center; gap: 7px; }
+.footer-links a .brand-logo { width: 14px; height: 14px; }
 .architecture-preview > span, .story-cell > div, .workflow-node, .core-node, .flow-node > span { background: linear-gradient(145deg, rgba(6, 37, 57, .96), rgba(3, 17, 27, .98)); border-color: rgba(34, 211, 238, .17); color: #b4c7d3; }
 .architecture-preview > .architecture-core, .story-cell.connected > div, .flow-node.active > span, .flow-node.analytics-active > span {
   color: #22d3ee;

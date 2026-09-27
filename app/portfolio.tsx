@@ -173,6 +173,24 @@ export default function Portfolio() {
       };
     }
 
+    const hero = document.querySelector<HTMLElement>('.hero-light');
+    const moveHero = (event: PointerEvent) => {
+      if (!hero) return;
+      const rect = hero.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      hero.style.setProperty('--hero-x', `${x}px`);
+      hero.style.setProperty('--hero-y', `${y}px`);
+      hero.style.setProperty('--hero-parallax-x', `${((x / rect.width) - .5) * 10}px`);
+      hero.style.setProperty('--hero-parallax-y', `${((y / rect.height) - .5) * 7}px`);
+    };
+    const resetHero = () => {
+      hero?.style.setProperty('--hero-parallax-x', '0px');
+      hero?.style.setProperty('--hero-parallax-y', '0px');
+    };
+    hero?.addEventListener('pointermove', moveHero);
+    hero?.addEventListener('pointerleave', resetHero);
+
     const selector = '.glass-card,.project-card,.skill-card,.radyan-feature,.lab-space,.documentation,.tech-item,.log-row,.process-grid>article';
     const cards = Array.from(document.querySelectorAll<HTMLElement>(selector));
     const handlers = cards.map(card => {
@@ -186,6 +204,8 @@ export default function Portfolio() {
     });
     return () => {
       handlers.forEach(({ card, move }) => card.removeEventListener('pointermove', move));
+      hero?.removeEventListener('pointermove', moveHero);
+      hero?.removeEventListener('pointerleave', resetHero);
       revealObserver?.disconnect();
       document.documentElement.classList.remove('motion-ready');
     };
@@ -213,53 +233,42 @@ export default function Portfolio() {
       <main id="main">
 
         {/* ===== HERO SECTION ===== */}
-        <section className="hero wrap" id="home">
+        <section className="hero hero-light" id="home">
           <div className="hero-top">
             <span className="eyebrow">
-              <i /> AUTOMATION ENGINEER / N8N EXPERT
+              <i /> AI AUTOMATION ENGINEER · N8N EXPERT · VIBE CODER
             </span>
           </div>
 
           <div className="hero-grid">
-            {/* LEFT - Info */}
             <div className="hero-copy">
               <h1>
-                I Build Systems<br />
-                That Work<br />
-                <span className="coral">Without You.</span>
+                I Build AI Systems<br />
+                That Work While You Don’t.
               </h1>
               <p>
-                I design production-ready n8n workflows, AI agents and API
-                integrations that remove repetitive work and connect business
-                operations.
+                AI automation, intelligent workflows, integrations, and modern web experiences designed to turn repetitive work into scalable systems.
               </p>
               <div className="hero-actions">
                 <SplitPill href="#work" variant="primary" icon={<ArrowUpRight />}>Explore My Work</SplitPill>
-                <SplitPill href="#contact" icon={<ArrowRight />}>Get in Touch</SplitPill>
+                <SplitPill href="#contact" icon={<ArrowRight />}>Let’s Build Together</SplitPill>
               </div>
               <div className="current-status">
-                <span className="status-dot" /> Automation Engineer at <strong>Radyan</strong>
-                <a href="#radyan" style={{marginLeft: '4px', color: 'inherit'}}><ArrowUpRight size={12} /></a>
+                <span className="status-dot" /> Available for Automation Projects
               </div>
             </div>
 
-            {/* RIGHT - Visualization */}
             <div className="network-shell">
               <div className="network-caption">
-                <span><Radio size={12} /> AUTOMATION IN MOTION</span>
-                <span>01 — SYSTEM VIEW</span>
+                <span><Radio size={12} /> LIVE AUTOMATION ARCHITECTURE</span>
+                <span>INTELLIGENT ORCHESTRATION</span>
               </div>
               <Network />
               <div className="network-bottom">
-                <span><i /> CONNECTED. AUTOMATED. INTELLIGENT.</span>
-                <span>HOVER TO EXPLORE ↗</span>
+                <span><i /> DATA FLOW ACTIVE</span>
+                <span>HOVER OR TAP A MODULE ↗</span>
               </div>
             </div>
-          </div>
-
-          <div className="hero-foot">
-            <span>BASED IN BANGLADESH <b>·</b> AVAILABLE FOR REMOTE PROJECTS</span>
-            <a href="#about">SCROLL TO EXPLORE <ArrowDown size={14} /></a>
           </div>
         </section>
 

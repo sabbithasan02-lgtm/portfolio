@@ -2,26 +2,41 @@
 import { useEffect, useRef, useState } from 'react';
 
 const heroNodes = [
-  { label: 'Webhook', x: 0.18, y: 0.22, symbol: '⬡' },
-  { label: 'AI Agent', x: 0.52, y: 0.08, symbol: '◈' },
-  { label: 'Database', x: 0.84, y: 0.25, symbol: '⬢' },
-  { label: 'API', x: 0.08, y: 0.52, symbol: '{ }' },
-  { label: 'CRM', x: 0.92, y: 0.52, symbol: '◇' },
-  { label: 'Email', x: 0.18, y: 0.78, symbol: '✉' },
-  { label: 'OpenAI', x: 0.60, y: 0.82, symbol: '✦' },
+  { label: 'n8n', x: 0.13, y: 0.20, symbol: '⌁' },
+  { label: 'AI Agents', x: 0.36, y: 0.10, symbol: '◇' },
+  { label: 'API', x: 0.87, y: 0.20, symbol: '{ }' },
+  { label: 'CRM', x: 0.92, y: 0.53, symbol: '◎' },
+  { label: 'Webhooks', x: 0.08, y: 0.53, symbol: '⬡' },
+  { label: 'Email', x: 0.82, y: 0.82, symbol: '✉' },
+  { label: 'OpenAI', x: 0.65, y: 0.10, symbol: '✦' },
+  { label: 'Database', x: 0.18, y: 0.82, symbol: '⬢' },
+  { label: 'WhatsApp', x: 0.36, y: 0.91, symbol: '◉' },
+  { label: 'Web Apps', x: 0.64, y: 0.91, symbol: '▣' },
+  { label: 'Lead Automation', x: 0.23, y: 0.49, symbol: '↗' },
+  { label: 'Data Processing', x: 0.77, y: 0.49, symbol: '▦' }
+];
+
+const toolkitNodes = [
+  { label: 'Webhooks', x: 0.18, y: 0.22, symbol: '⬡' },
+  { label: 'OpenAI', x: 0.52, y: 0.08, symbol: '◈' },
+  { label: 'Supabase', x: 0.84, y: 0.25, symbol: '⬢' },
+  { label: 'APIs', x: 0.08, y: 0.52, symbol: '{ }' },
+  { label: 'Slack', x: 0.92, y: 0.52, symbol: '◇' },
+  { label: 'JavaScript', x: 0.18, y: 0.78, symbol: '✉' },
+  { label: 'PostgreSQL', x: 0.60, y: 0.82, symbol: '✦' },
   { label: 'Google Sheets', x: 0.78, y: 0.68, symbol: '▦' },
   { label: 'Telegram', x: 0.38, y: 0.88, symbol: '➤' },
-  { label: 'Analytics', x: 0.34, y: 0.32, symbol: '▥' }
+  { label: 'n8n', x: 0.34, y: 0.32, symbol: '▥' }
 ];
 
 export default function Network({ toolkit = false }: { toolkit?: boolean }) {
-  const nodes = toolkit
-    ? heroNodes.map((n, i) => ({ ...n, label: ['Webhooks', 'OpenAI', 'Supabase', 'APIs', 'Slack', 'JavaScript', 'PostgreSQL', 'Google Sheets', 'Telegram', 'n8n'][i] }))
-    : heroNodes;
+  const nodes = toolkit ? toolkitNodes : heroNodes;
 
   const ref = useRef<HTMLCanvasElement>(null);
   const box = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(-1);
+  const [hovered, setHovered] = useState(-1);
+  const [selected, setSelected] = useState(-1);
+  const active = hovered >= 0 ? hovered : selected;
   const activeRef = useRef(-1);
 
   useEffect(() => { activeRef.current = active; }, [active]);
@@ -59,10 +74,14 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         const scroll = Math.min(1, window.scrollY / 600);
         const connection = 0.2 + scroll * 0.8;
 
+        const dark = toolkit;
+        const orbitColor = dark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(86, 107, 138, 0.10)';
+        const restingLine = dark ? 'rgba(255, 255, 255, 0.09)' : 'rgba(106, 121, 145, 0.20)';
+
         // Draw orbital rings (very subtle)
         ctx.beginPath();
         ctx.arc(cx, cy, width * 0.28, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.strokeStyle = orbitColor;
         ctx.lineWidth = 1;
         ctx.stroke();
 
@@ -75,30 +94,42 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
           const n = nodes[j];
           const nx = width * n.x;
           const ny = height * n.y;
-          const lit = activeRef.current === j;
+          const automaticRoute = !reduced && (Math.floor(t / 2100) + j * 2) % 7 === 0;
+          const lit = activeRef.current === j || automaticRoute;
 
-          // Curved connection line
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.bezierCurveTo(
-            cx + (nx - cx) * 0.5, cy,
-            nx, cy + (ny - cy) * 0.5, nx, ny
-          );
-          ctx.strokeStyle = lit ? 'rgba(34, 211, 238, 0.5)' : `rgba(255, 255, 255, ${0.06 + connection * 0.08})`;
-          ctx.lineWidth = lit ? 1.5 : 1;
-          ctx.stroke();
+          // Fine parallel cable lines create a physical data-bus feel.
+          for (let cable = -1; cable <= 1; cable++) {
+            ctx.beginPath();
+            ctx.moveTo(cx + cable * 2, cy + cable * 1.5);
+            ctx.bezierCurveTo(
+              cx + (nx - cx) * 0.46, cy + cable * 4,
+              nx + cable * 3, cy + (ny - cy) * 0.55,
+              nx + cable * 1.5, ny
+            );
+            const signal = ctx.createLinearGradient(cx, cy, nx, ny);
+            signal.addColorStop(0, '#087BFF');
+            signal.addColorStop(.55, '#39E6FF');
+            signal.addColorStop(1, '#796BFF');
+            ctx.strokeStyle = lit && cable === 0 ? signal : restingLine;
+            ctx.globalAlpha = lit && cable === 0 ? .74 : (.38 + connection * .18);
+            ctx.lineWidth = lit && cable === 0 ? 1.65 : .7;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
 
-          // Data particles
-          const p = reduced ? 0.5 : ((t / 5000 + j * 0.11) % 1);
+          // Only selected routes carry energy at any moment.
+          if (!lit && activeRef.current !== j) continue;
+          const p = reduced ? 0.5 : ((t / (activeRef.current === j ? 1250 : 2200) + j * 0.13) % 1);
           const inv = 1 - p;
           const px = inv * inv * inv * cx + 3 * inv * inv * p * (cx + (nx - cx) * 0.5) + 3 * inv * p * p * nx + p * p * p * nx;
           const py = inv * inv * inv * cy + 3 * inv * inv * p * cy + 3 * inv * p * p * (cy + (ny - cy) * 0.5) + p * p * p * ny;
 
           ctx.beginPath();
           ctx.arc(px, py, lit ? 3 : 2.5, 0, Math.PI * 2);
-          ctx.fillStyle = lit ? '#22D3EE' : '#00AEEF';
-          ctx.shadowBlur = lit ? 12 : 6;
-          ctx.shadowColor = '#00AEEF';
+          const pulseColors = ['#087BFF', '#39E6FF', '#796BFF'];
+          ctx.fillStyle = pulseColors[j % pulseColors.length];
+          ctx.shadowBlur = activeRef.current === j ? 16 : 10;
+          ctx.shadowColor = pulseColors[j % pulseColors.length];
           ctx.fill();
           ctx.shadowBlur = 0;
         }
@@ -115,13 +146,13 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
   }, []);
 
   return (
-    <div className="network" ref={box}>
+    <div className={`network ${toolkit ? 'toolkit-network' : 'hero-network'}`} ref={box}>
       <canvas ref={ref} aria-hidden="true" />
 
       {/* Central n8n Node */}
       <button
-        className="core-node"
-        onClick={() => setActive(-1)}
+        className={`core-node ${active >= 0 ? 'core-active' : ''}`}
+        onClick={() => { setSelected(-1); setHovered(-1); }}
         aria-label="Show all workflow connections"
       >
         <span className="core-symbol">
@@ -131,8 +162,8 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
             <path d="M2 12l10 5 10-5" />
           </svg>
         </span>
-        <strong>{toolkit ? 'Sabbit' : 'n8n'}</strong>
-        <small>{toolkit ? 'AUTOMATION ENGINEER' : 'WORKFLOW ENGINE'}</small>
+        <strong>{toolkit ? 'Sabbit' : 'CoAgent'}</strong>
+        <small>{toolkit ? 'AUTOMATION ENGINEER' : 'AI AUTOMATION CORE'}</small>
       </button>
 
       {/* External Nodes */}
@@ -140,11 +171,12 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         <button
           key={n.label}
           className={`flow-node ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
-          style={{ left: n.x * 100 + '%', top: n.y * 100 + '%' }}
-          onMouseEnter={() => setActive(i)}
-          onMouseLeave={() => setActive(-1)}
-          onFocus={() => setActive(i)}
-          onBlur={() => setActive(-1)}
+          style={{ left: n.x * 100 + '%', top: n.y * 100 + '%', '--node-delay': `${.5 + i * .055}s` } as React.CSSProperties}
+          onMouseEnter={() => setHovered(i)}
+          onMouseLeave={() => setHovered(-1)}
+          onFocus={() => setHovered(i)}
+          onBlur={() => setHovered(-1)}
+          onClick={() => setSelected(i)}
           aria-label={`Explore ${n.label} connection`}
         >
           <span>{n.symbol}</span>
@@ -157,11 +189,11 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         {active >= 0 ? (
           <>
             <span className="status-dot" />
-            {nodes[active].label} → {toolkit ? 'Sabbit' : 'n8n'} → Automated workflow
+            {nodes[active].label} → {toolkit ? 'Sabbit' : 'CoAgent'} → Automated workflow
           </>
         ) : (
           <>
-            <span className="status-dot" /> Analytics ↔ n8n → Automated workflow
+            <span className="status-dot" /> Connected tools → intelligent automation → business action
           </>
         )}
       </div>

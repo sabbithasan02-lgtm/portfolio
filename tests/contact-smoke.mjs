@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+const base=process.env.TEST_BASE_URL||'http://localhost:5173';
+const send=async(body,origin=base)=>fetch(base+'/api/contact',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify(body)});
+const invalid=await send({});assert.equal(invalid.status,400);
+const id=crypto.randomUUID();
+const payload={id,name:'Local QA',email:'smoke@example.com',company:'Test only',message:'Local smoke test; not a real enquiry.',tools:'n8n',projectType:'n8n Automation',budget:'',website:''};
+const cross=await send(payload,'https://untrusted.example');assert.equal(cross.status,403);
+const valid=await send(payload);assert.equal(valid.status,201);assert.equal((await valid.json()).ok,true);
+const retry=await send(payload);assert.equal(retry.status,200);assert.equal((await retry.json()).ok,true);
+const badEmail=await send({...payload,id:crypto.randomUUID(),email:'not-an-email'});assert.equal(badEmail.status,400);
+console.log('PASS: validation, origin protection, persistent submission, duplicate retry and invalid email.');

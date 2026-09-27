@@ -1,0 +1,4 @@
+import type { Project } from "./projects";
+export const radyan={company:"Radyan",url:"https://radyanbd.com",role:"Automation Engineer",status:"ACTIVE",type:"Business Automation / E-commerce Operations",description:"I currently work with Radyan, where I build and improve automation systems for real business operations.",details:"My work includes designing workflows, connecting tools and APIs, reducing repetitive processes and developing systems that can run automatically."};
+// Add approved, real workflow details here. Do not publish confidential business data.
+export const radyanWorkflows:Project[]=[];

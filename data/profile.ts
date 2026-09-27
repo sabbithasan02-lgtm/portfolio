@@ -1,0 +1,2 @@
+export const profile={name:"Sabbit Ahamed",role:"Automation Engineer",location:"Bangladesh",headline:"I Build Systems That Work Without You.",email:"",links:[{label:"LinkedIn",url:"https://www.linkedin.com/in/sabbitux/"},{label:"Fiverr",url:"https://www.fiverr.com/s/2pKlKQN"}],metrics:[] as {value:string;label:string;verified:boolean}[]};
+export const projectTypes=["n8n Automation","AI Agent","API Integration","E-commerce Automation","CRM Automation","Lead Generation","Internal Tools","Custom Automation"];

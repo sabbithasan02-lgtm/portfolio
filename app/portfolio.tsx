@@ -661,7 +661,7 @@ export default function Portfolio() {
       {/* ===== FOOTER ===== */}
       <footer className="wrap footer">
         <div className="footer-top">
-          <a className="brand" href="#home">SABBIT<span className="brand-dot">.</span></a>
+          <a className="brand" href="#home">SABBIT AHAMED<span className="brand-dot">.</span></a>
           <p>Automation Engineer building intelligent systems for modern businesses.</p>
           <span>Building systems that<br />remove repetitive work.</span>
         </div>

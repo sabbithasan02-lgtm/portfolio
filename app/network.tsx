@@ -147,7 +147,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
   }, []);
 
   return (
-    <div className={`network ${toolkit ? 'toolkit-network' : 'hero-network'}`} ref={box}>
+    <div className={`network hero-network ${toolkit ? 'toolkit-network' : ''}`} ref={box}>
       <canvas ref={ref} aria-hidden="true" />
 
       {/* Central n8n Node */}

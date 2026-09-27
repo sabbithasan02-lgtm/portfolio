@@ -12,22 +12,33 @@ const nodeLogos: Record<string, string> = {
 
 const nodeSlug = (label: string) => label.toLowerCase().replace(/\s+/g, '-');
 
-const heroNodes = [
-  { label: 'OpenAI', x: 0.10, y: 0.28, symbol: '◈', group: 'input' },
-  { label: 'Claude', x: 0.10, y: 0.50, symbol: '✳', group: 'input' },
-  { label: 'Gemini', x: 0.10, y: 0.72, symbol: '✦', group: 'input' },
-  { label: 'Memory', x: 0.36, y: 0.10, symbol: '◉', group: 'capability' },
-  { label: 'Tools', x: 0.50, y: 0.08, symbol: '⚒', group: 'capability' },
-  { label: 'Vector Store', x: 0.64, y: 0.10, symbol: '▤', group: 'capability' },
-  { label: 'Slack', x: 0.90, y: 0.20, symbol: '⌗', group: 'output' },
-  { label: 'CRM', x: 0.90, y: 0.35, symbol: '◎', group: 'output' },
-  { label: 'Database', x: 0.90, y: 0.50, symbol: '⬢', group: 'output' },
-  { label: 'Email', x: 0.90, y: 0.65, symbol: '✉', group: 'output' },
-  { label: 'API', x: 0.90, y: 0.80, symbol: '{ }', group: 'output' },
-  { label: 'Execute', x: 0.50, y: 0.91, symbol: '↗', group: 'action' }
+type NetworkNode = {
+  label: string;
+  x: number;
+  y: number;
+  mx?: number;
+  my?: number;
+  symbol: string;
+  group?: 'input' | 'capability' | 'output' | 'action';
+  mobileHidden?: boolean;
+};
+
+const heroNodes: NetworkNode[] = [
+  { label: 'OpenAI', x: 0.10, y: 0.28, mx: 0.13, my: 0.32, symbol: '◈', group: 'input' },
+  { label: 'Claude', x: 0.10, y: 0.50, mx: 0.13, my: 0.52, symbol: '✳', group: 'input' },
+  { label: 'Gemini', x: 0.10, y: 0.72, mx: 0.13, my: 0.72, symbol: '✦', group: 'input' },
+  { label: 'Memory', x: 0.36, y: 0.10, mx: 0.23, my: 0.10, symbol: '◉', group: 'capability' },
+  { label: 'Tools', x: 0.50, y: 0.08, mx: 0.50, my: 0.08, symbol: '⚒', group: 'capability' },
+  { label: 'Vector Store', x: 0.64, y: 0.10, mx: 0.77, my: 0.10, symbol: '▤', group: 'capability' },
+  { label: 'Slack', x: 0.90, y: 0.20, mx: 0.87, my: 0.32, symbol: '⌗', group: 'output' },
+  { label: 'CRM', x: 0.90, y: 0.35, mx: 0.87, my: 0.42, symbol: '◎', group: 'output', mobileHidden: true },
+  { label: 'Database', x: 0.90, y: 0.50, mx: 0.87, my: 0.52, symbol: '⬢', group: 'output' },
+  { label: 'Email', x: 0.90, y: 0.65, mx: 0.87, my: 0.72, symbol: '✉', group: 'output' },
+  { label: 'API', x: 0.90, y: 0.80, mx: 0.87, my: 0.82, symbol: '{ }', group: 'output', mobileHidden: true },
+  { label: 'Execute', x: 0.50, y: 0.91, mx: 0.50, my: 0.91, symbol: '↗', group: 'action' }
 ];
 
-const toolkitNodes = [
+const toolkitNodes: NetworkNode[] = [
   { label: 'Webhooks', x: 0.18, y: 0.22, symbol: '⬡' },
   { label: 'OpenAI', x: 0.52, y: 0.08, symbol: '◈' },
   { label: 'Supabase', x: 0.84, y: 0.25, symbol: '⬢' },
@@ -91,8 +102,10 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
         // Draw connections
         for (let j = 0; j < nodes.length; j++) {
           const n = nodes[j];
-          const nx = width * n.x;
-          const ny = height * n.y;
+          const mobile = width <= 760;
+          if (mobile && n.mobileHidden) continue;
+          const nx = width * (mobile ? n.mx ?? n.x : n.x);
+          const ny = height * (mobile ? n.my ?? n.y : n.y);
           const automaticRoute = !reduced && (Math.floor(t / 2100) + j * 2) % 7 === 0;
           const lit = activeRef.current === j || automaticRoute;
 
@@ -172,8 +185,8 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
       {nodes.map((n, i) => (
         <button
           key={n.label}
-          className={`flow-node node-${nodeSlug(n.label)} ${'group' in n ? `node-${n.group}` : ''} ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
-          style={{ left: n.x * 100 + '%', top: n.y * 100 + '%', '--node-delay': `${.5 + i * .055}s` } as React.CSSProperties}
+          className={`flow-node node-${nodeSlug(n.label)} ${n.group ? `node-${n.group}` : ''} ${n.mobileHidden ? 'node-mobile-hidden' : ''} ${active === i ? 'active' : ''} ${n.label === 'Analytics' ? 'analytics-active' : ''}`}
+          style={{ left: n.x * 100 + '%', top: n.y * 100 + '%', '--mobile-left': `${(n.mx ?? n.x) * 100}%`, '--mobile-top': `${(n.my ?? n.y) * 100}%`, '--node-delay': `${.5 + i * .055}s` } as React.CSSProperties}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered(-1)}
           onFocus={() => setHovered(i)}

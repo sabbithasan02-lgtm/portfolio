@@ -804,7 +804,7 @@ html, body { max-width: 100%; overflow-x: clip; }
   .personal-hero { min-height: 940px; padding-top: 110px; }
   .personal-hero .hero-copy { margin-bottom: -14px; padding: 22px 16px 24px; border-radius: 22px; }
   .personal-hero .network-shell { margin-top: 0; }
-  .personal-hero .hero-network { height: 430px; }
+  .personal-hero .hero-network { height: 470px; }
   .personal-hero .hero-network .core-node { width: 132px; height: 132px; }
   .personal-hero .hero-network .core-node strong { font-size: 24px; }
   .personal-hero .hero-network .core-node small { font-size: 7px; }
@@ -866,17 +866,12 @@ html, body { max-width: 100%; overflow-x: clip; }
   .tool-strip-brand { font-size: 10px; gap: 7px; }
   .tool-strip-brand .brand-logo { width: 17px; height: 17px; }
 
-  .personal-hero .hero-network .flow-node { display: flex !important; }
-  .personal-hero .hero-network .node-capability,
-  .personal-hero .hero-network .node-crm,
-  .personal-hero .hero-network .node-api { display: none !important; }
-  .personal-hero .hero-network .node-openai { left: 13% !important; top: 29% !important; }
-  .personal-hero .hero-network .node-claude { left: 13% !important; top: 50% !important; }
-  .personal-hero .hero-network .node-gemini { left: 13% !important; top: 71% !important; }
-  .personal-hero .hero-network .node-slack { left: 87% !important; top: 29% !important; }
-  .personal-hero .hero-network .node-database { left: 87% !important; top: 50% !important; }
-  .personal-hero .hero-network .node-email { left: 87% !important; top: 71% !important; }
-  .personal-hero .hero-network .node-execute { left: 50% !important; top: 89% !important; }
+  .personal-hero .hero-network .flow-node {
+    display: flex !important;
+    left: var(--mobile-left) !important;
+    top: var(--mobile-top) !important;
+  }
+  .personal-hero .hero-network .node-mobile-hidden { display: none !important; }
   .personal-hero .hero-network .flow-node > small { max-width: 66px; font-size: 7px; }
   .personal-hero .hero-network .node-readout { bottom: -2px; max-width: 86%; text-align: center; }
 }

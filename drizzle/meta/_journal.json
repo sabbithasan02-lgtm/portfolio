@@ -8,6 +8,13 @@
       "when": 1790438789041,
       "tag": "0000_massive_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790527200000,
+      "tag": "0001_portfolio_case_studies",
+      "breakpoints": true
     }
   ]
 }

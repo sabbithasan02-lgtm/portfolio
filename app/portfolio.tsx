@@ -11,6 +11,7 @@ import SplitPill from './split-pill';
 import SmartNavbar from './smart-navbar';
 import ContactForm from './contact-form';
 import ProjectDetail from './project-detail';
+import CaseStudyManager from './case-study-manager';
 import { profile } from '@/data/profile';
 import { primarySkills, skillGroups } from '@/data/skills';
 import { experience } from '@/data/experience';
@@ -140,8 +141,24 @@ export default function Portfolio() {
   const [menu, setMenu] = useState(false);
   const [filter, setFilter] = useState('ALL');
   const [detail, setDetail] = useState<Project | null>(null);
+  const [uploadedProjects, setUploadedProjects] = useState<Project[]>([]);
+  const [canManageProjects, setCanManageProjects] = useState(false);
 
   const filtered = changelog.filter(x => filter === 'ALL' || x.categories.includes(filter));
+  const selectedProjects = [...uploadedProjects, ...projects];
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/projects?admin=1')
+      .then(async response => await response.json() as { projects?: Project[]; canManage?: boolean })
+      .then(data => {
+        if (!active) return;
+        setUploadedProjects(data.projects || []);
+        setCanManageProjects(Boolean(data.canManage));
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -433,10 +450,11 @@ export default function Portfolio() {
               <h2>Selected Automations<span className="coral">.</span></h2>
             </div>
             <p className="section-aside">
-              My automation systems.<br />The problems behind lequed.
+              My automation systems.<br />The work behind each system.
             </p>
           </div>
-          <div className="project-grid">{projects.map((p, i) => <ProjectCard key={p.id} project={p} index={i} onOpen={setDetail} />)}</div>
+          <div className="project-grid">{selectedProjects.map((p, i) => <ProjectCard key={p.id} project={p} index={i} onOpen={setDetail} />)}</div>
+          {canManageProjects && <CaseStudyManager onCreated={project => setUploadedProjects(current => [project, ...current])} />}
         </section>
 
         {/* ===== AUTOMATION WORKFLOW ===== */}
@@ -684,22 +702,26 @@ export default function Portfolio() {
 }
 
 function ProjectCard({ project: p, index, onOpen }: { project: Project; index: number; onOpen: (p: Project) => void }) {
+  const cover = p.screenshots[0];
   return (
     <button className="project-card" onClick={() => onOpen(p)}>
-      <div className="project-art">
-        <div className="tiny-label">SYSTEM {String(index + 1).padStart(2, '0')} / {p.company || 'INDEPENDENT'}</div>
-        <div className="architecture-preview">
-          <span><Webhook size={20} />Trigger</span>
-          <i />
-          <span className="architecture-core"><Workflow size={26} />n8n</span>
-          <i />
-          <span><Braces size={20} />Integration</span>
-          <i />
-          <span><Check size={20} />Action</span>
-        </div>
-        <div className="project-art-bottom">
-          <span>WORKFLOW ARCHITECTURE</span>
-          <span>CONCEPTUAL OVERVIEW</span>
+      <div className={`project-art ${cover ? 'project-art--screenshot' : ''}`}>
+        {cover ? <img className="project-cover" src={cover.src} alt={cover.alt} loading="lazy" /> : null}
+        <div className="project-art-overlay">
+          <div className="tiny-label">SYSTEM {String(index + 1).padStart(2, '0')} / {p.company || 'INDEPENDENT'}</div>
+          {!cover && <div className="architecture-preview">
+            <span><Webhook size={20} />Trigger</span>
+            <i />
+            <span className="architecture-core"><Workflow size={26} />n8n</span>
+            <i />
+            <span><Braces size={20} />Integration</span>
+            <i />
+            <span><Check size={20} />Action</span>
+          </div>}
+          <div className="project-art-bottom">
+            <span>{cover ? 'CASE STUDY SCREENSHOT' : 'WORKFLOW ARCHITECTURE'}</span>
+            <span>CLICK TO OPEN ↗</span>
+          </div>
         </div>
       </div>
       <div className="project-info">

@@ -51,7 +51,7 @@ export default function CaseStudyManager({ onCreated }: { onCreated: (project: P
           <label>Problem *<textarea name="problem" required maxLength={3000} rows={3} placeholder="Describe the manual process or business problem." /></label>
           <label>Solution *<textarea name="solution" required maxLength={4000} rows={4} placeholder="Explain what you built and how it works." /></label>
           <label>Workflow steps<textarea name="workflow" rows={3} placeholder={'Trigger\nProcess data\nAI decision\nAction'} /></label>
-          <label>Technologies<input name="technologies" placeholder="n8n, OpenAI, Supabase, Webhooks" /></label>
+          <label>Technologies<input name="technologies" placeholder="OpenAI, Supabase, Webhooks, REST APIs" /></label>
           <label>Key learnings<textarea name="learnings" rows={2} placeholder="One learning per line" /></label>
           <label>Next improvements<textarea name="nextSteps" rows={2} placeholder="One improvement per line" /></label>
           <label className="case-study-upload"><Upload size={20} /><span><strong>Upload screenshots *</strong><small>JPG, PNG, WebP or GIF · up to 6 files · 5 MB each</small></span><input type="file" name="screenshots" accept="image/jpeg,image/png,image/webp,image/gif" multiple required /></label>

@@ -1,5 +1,20 @@
 import { contactDb } from "@/db/contact";
 import { projectTypes } from "@/data/profile";
+import { env } from "cloudflare:workers";
+import { Resend } from "resend";
+
+type ContactPayload={name:string;email:string;company:string;message:string;tools:string;projectType:string;budget:string};
+function escapeHtml(value:string){return value.replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]!));}
+async function notifyOwner(message:ContactPayload){
+const settings=env as unknown as {RESEND_API_KEY?:string;CONTACT_TO_EMAIL?:string;CONTACT_FROM_EMAIL?:string};
+if(!settings.RESEND_API_KEY)return;
+const to=settings.CONTACT_TO_EMAIL||"sabbithasan02@gmail.com";
+const from=settings.CONTACT_FROM_EMAIL||"onboarding@resend.dev";
+const html=`<h2>New portfolio enquiry</h2><p><b>Name:</b> ${escapeHtml(message.name)}</p><p><b>Email:</b> ${escapeHtml(message.email)}</p><p><b>Company:</b> ${escapeHtml(message.company||"Not provided")}</p><p><b>Project:</b> ${escapeHtml(message.projectType)}</p><p><b>Budget:</b> ${escapeHtml(message.budget||"Not provided")}</p><p><b>Tools:</b> ${escapeHtml(message.tools||"Not provided")}</p><hr><p>${escapeHtml(message.message).replace(/\n/g,"<br>")}</p>`;
+const resend=new Resend(settings.RESEND_API_KEY);
+const {error}=await resend.emails.send({from,to:[to],replyTo:message.email,subject:`Portfolio enquiry from ${message.name}`,html});
+if(error)throw new Error(error.message);
+}
 export async function POST(request:Request){
 try{
 const origin=request.headers.get("origin");if(request.headers.get("sec-fetch-site")==="cross-site"||(origin&&origin!==new URL(request.url).origin))return Response.json({error:"Please send this form from the portfolio."},{status:403});
@@ -18,5 +33,6 @@ const existing=await db.prepare("SELECT id FROM contact_messages WHERE id = ? AN
 const now=Date.now();const recent=await db.prepare("SELECT COUNT(*) AS total FROM contact_messages WHERE sender_hash = ? AND created_at > ?").bind(hash,now-3600000).first<{total:number}>();
 if(recent&&recent.total>=5)return Response.json({error:"A few messages have already been sent. Please try again later, or reach me on LinkedIn."},{status:429});
 await db.prepare("INSERT INTO contact_messages (id,name,email,company,message,tools,project_type,budget,created_at,sender_hash) VALUES (?,?,?,?,?,?,?,?,?,?)").bind(b.id,b.name,b.email,b.company,b.message,b.tools,b.projectType,b.budget,now,hash).run();
+try{await notifyOwner(b as ContactPayload)}catch(error){console.error("Contact email notification failed",error instanceof Error?error.message:"Email error")}
 return Response.json({ok:true},{status:201});
 }catch(error){console.error("Contact message could not be saved",error instanceof Error?error.message:"Storage error");return Response.json({error:"Your message could not be saved. Please try again or reach me on LinkedIn."},{status:503})}}

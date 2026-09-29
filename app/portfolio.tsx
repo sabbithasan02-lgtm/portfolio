@@ -11,14 +11,14 @@ import SplitPill from './split-pill';
 import SmartNavbar from './smart-navbar';
 import ContactForm from './contact-form';
 import ProjectDetail from './project-detail';
-import CaseStudyManager from './case-study-manager';
 import { profile } from '@/data/profile';
 import { primarySkills, skillGroups } from '@/data/skills';
-import { experience } from '@/data/experience';
 import { projects, type Project } from '@/data/projects';
 import { radyan, radyanWorkflows } from '@/data/radyan';
 import { categories, changelog } from '@/data/changelog';
 import { lab, labInterests } from '@/data/lab';
+import { defaultSiteContent, type SiteContent } from '@/data/site-content';
+import type { EditableService } from '@/data/site-content';
 
 const skillIcons = [Workflow, Sparkles, GitBranch, Braces, Webhook, Cog, Database, Cpu];
 
@@ -33,8 +33,8 @@ const services = [
   {
     num: '01',
     icon: Workflow,
-    title: 'n8n Workflow Automation',
-    desc: 'Automate repetitive business processes using robust n8n workflows.'
+    title: 'Workflow Automation',
+    desc: 'Automate repetitive business processes with reliable, connected workflows.'
   },
   {
     num: '02',
@@ -69,15 +69,18 @@ const services = [
 ];
 
 const tools = [
-  'n8n', 'OpenAI', 'Claude', 'Supabase', 'PostgreSQL', 'Google Sheets',
+  'OpenAI', 'Claude', 'Supabase', 'PostgreSQL', 'Google Sheets',
   'Notion', 'Slack', 'Gmail', 'Webhooks', 'REST APIs', 'JavaScript',
   'TypeScript', 'Next.js', 'Python'
 ];
 
-const marqueeBrands = ['n8n', 'OpenAI', 'Claude', 'Supabase', 'PostgreSQL', 'Google Sheets', 'Notion', 'Slack', 'Gmail', 'Python', 'Next.js'];
+const marqueeBrands = ['n8n', 'Make', 'Zapier', 'Claude', 'Antigravity', 'OpenAI', 'Supabase', 'PostgreSQL', 'Google Sheets', 'Notion', 'Slack', 'Gmail', 'Python', 'Next.js'];
 
 const brandLogos: Record<string, string> = {
   'n8n': '/brands/n8n.svg',
+  'Make': '/brands/make.svg',
+  'Zapier': '/brands/zapier.svg',
+  'Antigravity': '/brands/antigravity.svg',
   'OpenAI': '/brands/openai.svg',
   'Claude': '/brands/claude.svg',
   'Supabase': '/brands/supabase.svg',
@@ -91,11 +94,11 @@ const brandLogos: Record<string, string> = {
   'Next.js': '/brands/nextjs.svg',
   'Python': '/brands/python.svg',
   'LinkedIn': '/brands/linkedin.svg',
-  'Fiverr': '/brands/fiverr.svg'
+  'Fiverr': '/brands/fiverr.svg',
+  'WhatsApp': '/brands/whatsapp.svg'
 };
 
 const techIcons: { [key: string]: React.ReactNode } = {
-  'n8n': <Workflow size={24} />,
   'OpenAI': <Sparkles size={24} />,
   'Claude': <MessageSquare size={24} />,
   'Supabase': <Database size={24} />,
@@ -142,7 +145,8 @@ export default function Portfolio() {
   const [filter, setFilter] = useState('ALL');
   const [detail, setDetail] = useState<Project | null>(null);
   const [uploadedProjects, setUploadedProjects] = useState<Project[]>([]);
-  const [canManageProjects, setCanManageProjects] = useState(false);
+  const [siteContent, setSiteContent] = useState<SiteContent>(defaultSiteContent);
+  const [serviceDetail, setServiceDetail] = useState<EditableService | null>(null);
 
   const filtered = changelog.filter(x => filter === 'ALL' || x.categories.includes(filter));
   const selectedProjects = [...uploadedProjects, ...projects];
@@ -150,14 +154,20 @@ export default function Portfolio() {
   useEffect(() => {
     let active = true;
     fetch('/api/projects?admin=1')
-      .then(async response => await response.json() as { projects?: Project[]; canManage?: boolean })
+      .then(async response => await response.json() as { projects?: Project[] })
       .then(data => {
         if (!active) return;
         setUploadedProjects(data.projects || []);
-        setCanManageProjects(Boolean(data.canManage));
       })
       .catch(() => undefined);
     return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/site-content')
+      .then(async response => await response.json() as { content?: SiteContent })
+      .then(data => { if (data.content) setSiteContent(data.content); })
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -243,7 +253,7 @@ export default function Portfolio() {
         <section className="hero hero-light personal-hero" id="home">
           <div className="hero-top">
             <span className="eyebrow">
-              <i /> SABBIT AHAMED · AI AUTOMATION · N8N · VIBE CODING
+              <i /> SABBIT AHAMED · AI AUTOMATION · WORKFLOW SYSTEMS · VIBE CODING
             </span>
           </div>
 
@@ -254,7 +264,7 @@ export default function Portfolio() {
                 <span className="hero-line-mask"><span>That Automate Real Work.</span></span>
               </h1>
               <p>
-                I design AI-powered automation systems, n8n workflows, integrations, and digital experiences that remove repetitive work and help businesses operate more efficiently.
+                I design AI-powered automation systems, connected workflows, integrations, and digital experiences that remove repetitive work and help businesses operate more efficiently.
               </p>
               <div className="hero-actions">
                 <SplitPill href="#work" variant="primary" icon={<ArrowUpRight />}>View My Work</SplitPill>
@@ -284,13 +294,9 @@ export default function Portfolio() {
           <div className="tool-strip-track">
             {[0, 1].map(copy => (
               <div className="tool-strip-group" aria-hidden={copy === 1} key={copy}>
-                <span className="tool-strip-intro">TURNING COMPLEXITY INTO FLOW</span>
                 {marqueeBrands.map(name => (
                   <span className="tool-strip-brand" key={`${copy}-${name}`}><BrandLogo name={name} size={20} />{name}</span>
                 ))}
-                <span className="tool-strip-text">AI AGENTS</span>
-                <span className="tool-strip-text">API INTEGRATIONS</span>
-                <span className="tool-strip-text">INTELLIGENT WORKFLOWS</span>
               </div>
             ))}
           </div>
@@ -314,34 +320,15 @@ export default function Portfolio() {
             </figcaption>
           </figure>
           <div className="about-copy">
-            <h2>I don't just automate tasks.<br /><span className="coral">I build systems.</span></h2>
+            <h2>{siteContent.about.heading}<br /><span className="coral">{siteContent.about.highlight}</span></h2>
             <p className="large-copy">
               I turn repetitive work into<br />
               <span>automated systems.</span>
             </p>
             <p className="body-copy">
-              I'm an Automation Engineer specializing in n8n, AI agents and API-driven workflows.
-              I focus on understanding business processes, identifying repetitive work and
-              designing reliable systems that automate those operations.
+              {siteContent.about.body}
             </p>
-            <div className="about-stats">
-              <div>
-                <strong>50+</strong>
-                <span>Automation Projects</span>
-              </div>
-              <div>
-                <strong>200+</strong>
-                <span>Workflows Built</span>
-              </div>
-              <div>
-                <strong>1000+</strong>
-                <span>Hours Automated</span>
-              </div>
-              <div>
-                <strong>50+</strong>
-                <span>Tools Integrated</span>
-              </div>
-            </div>
+            <div className="about-stats">{(siteContent.about.metrics || defaultSiteContent.about.metrics).map(metric => <div key={metric.label}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}</div>
             <a className="text-button" href="#radyan">
               See what I'm building <ArrowUpRight size={18} />
             </a>
@@ -353,18 +340,19 @@ export default function Portfolio() {
           <div className="section-label">02 / SERVICES</div>
           <h2>What I can build<br />for you<span className="coral">.</span></h2>
           <div className="services-grid">
-            {services.map(s => {
+            {siteContent.services.map((editableService, index) => {
+              const s = services[index] || { num: String(index + 1).padStart(2, '0'), icon: Workflow, title: editableService.title, desc: editableService.description };
               const Icon = s.icon;
               return (
-                <div key={s.num} className="glass-card service-card">
-                  <span className="service-number">{s.num}</span>
+                <button type="button" onClick={() => setServiceDetail(editableService)} key={`${editableService.title}-${index}`} className="glass-card service-card">
+                  <span className="service-number">{String(index + 1).padStart(2, '0')}</span>
                   <div className="service-icon">
                     <Icon size={24} />
                   </div>
-                  <h3>{s.title}</h3>
-                  <p>{s.desc}</p>
+                  <h3>{editableService.title}</h3>
+                  <p>{editableService.description}</p>
                   <ArrowUpRight size={18} className="service-arrow" />
-                </div>
+                </button>
               );
             })}
           </div>
@@ -447,28 +435,13 @@ export default function Portfolio() {
           <div className="section-head">
             <div>
               <div className="section-label">04 / SELECTED WORK</div>
-              <h2>Selected Automations<span className="coral">.</span></h2>
+              <h2>{siteContent.work.heading}</h2>
             </div>
             <p className="section-aside">
-              My automation systems.<br />The work behind each system.
+              {siteContent.work.intro}
             </p>
           </div>
           <div className="project-grid">{selectedProjects.map((p, i) => <ProjectCard key={p.id} project={p} index={i} onOpen={setDetail} />)}</div>
-          {canManageProjects && <CaseStudyManager onCreated={project => setUploadedProjects(current => [project, ...current])} />}
-        </section>
-
-        {/* ===== AUTOMATION WORKFLOW ===== */}
-        <section className="wrap section workflow-section reveal-target">
-          <div className="section-label">05 / HOW AUTOMATION WORKS</div>
-          <h2>From trigger to <span className="coral">result</span></h2>
-          <div className="workflow-diagram">
-            {['Trigger', 'Process', 'AI', 'Decision', 'Action', 'Result'].map((step, i) => (
-              <div key={step} className="workflow-step">
-                <div className="workflow-node">{step}</div>
-                {i < 5 && <div className="workflow-connector" />}
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* ===== HOW I WORK ===== */}
@@ -533,8 +506,8 @@ export default function Portfolio() {
         {/* ===== EXPERIENCE ===== */}
         <section className="wrap section experience-section reveal-target" id="experience">
           <div className="section-label">08 / EXPERIENCE</div>
-          <h2>Building in the real world<span className="coral">.</span></h2>
-          {experience.map(x => (
+          <h2>{siteContent.experience.heading}</h2>
+          {siteContent.experience.items.map(x => (
             <article className="experience" key={x.company}>
               <div>
                 <span className="status-dot" /> {x.period}
@@ -691,12 +664,14 @@ export default function Portfolio() {
             {profile.links.map(x => (
               <a key={x.label} href={x.url} target="_blank" rel="noreferrer"><BrandLogo name={x.label} size={14} />{x.label} ↗</a>
             ))}
+            <a href="/admin">Admin login ↗</a>
             <a href="#home">Back to top ↑</a>
           </div>
         </div>
       </footer>
 
       <ProjectDetail project={detail} onClose={() => setDetail(null)} />
+      {serviceDetail && <div className="service-dialog-backdrop" role="presentation" onMouseDown={() => setServiceDetail(null)}><article className="service-dialog" role="dialog" aria-modal="true" aria-labelledby="service-dialog-title" onMouseDown={event => event.stopPropagation()}><button className="service-dialog-close" onClick={() => setServiceDetail(null)} aria-label="Close service details"><X /></button><span className="section-label">SERVICE DETAILS</span><h2 id="service-dialog-title">{serviceDetail.title}</h2><p>{serviceDetail.description}</p><p className="body-copy">{serviceDetail.details}</p><a className="button primary" href="#contact" onClick={() => setServiceDetail(null)}>Discuss this service <ArrowUpRight size={17} /></a></article></div>}
     </>
   );
 }
@@ -712,7 +687,7 @@ function ProjectCard({ project: p, index, onOpen }: { project: Project; index: n
           {!cover && <div className="architecture-preview">
             <span><Webhook size={20} />Trigger</span>
             <i />
-            <span className="architecture-core"><Workflow size={26} />n8n</span>
+            <span className="architecture-core"><Workflow size={26} />Automation</span>
             <i />
             <span><Braces size={20} />Integration</span>
             <i />

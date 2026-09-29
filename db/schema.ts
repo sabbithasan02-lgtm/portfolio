@@ -32,3 +32,9 @@ export const portfolioProjects = sqliteTable("portfolio_projects", {
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 }, table => [index("idx_portfolio_projects_created").on(table.createdAt)]);
+
+export const siteSettings = sqliteTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});

@@ -29,14 +29,14 @@ The initial site contains the supplied current Radyan role. The generic workflow
   summary: "A factual summary",
   problem: "The actual problem",
   solution: "What I built",
-  workflow: ["Trigger", "n8n", "API", "Output"],
-  technologies: ["n8n", "Webhooks"],
+  workflow: ["Trigger", "Automation", "API", "Output"],
+  technologies: ["Workflow Automation", "Webhooks"],
   metrics: [],
   screenshots: [],
   learnings: [],
   nextSteps: [],
   architecture: "Optional architecture notes",
-  category: ["RADYAN", "N8N"]
+  category: ["RADYAN", "AUTOMATION"]
 }
 ```
 

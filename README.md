@@ -42,9 +42,7 @@ The initial site contains the supplied current Radyan role. The generic workflow
 
 ## Contact messages
 
-The form stores messages in D1's `contact_messages` table. It validates on the server, rejects cross-site requests, uses prepared statements, suppresses duplicate retries, and limits submissions to five per sender per hour. A success message appears only after a successful write.
-
-Messages can be viewed through the Site's database tools. This version does not send email notifications or forward messages to an external service; no destination email or webhook was supplied. Do not expose the contact table through a public read endpoint. The local QA data stays in ignored `.wrangler/` storage and is not deployed.
+The form validates submissions on the server and rejects cross-site requests. On Cloudflare it stores messages in D1, suppresses duplicate retries and rate-limits senders. When `RESEND_API_KEY` is configured it also sends each enquiry to `CONTACT_TO_EMAIL`. On Vercel, where D1 is unavailable, verified Resend email delivery is used instead of database storage.
 
 ## Development
 
@@ -68,3 +66,11 @@ Keyboard-accessible navigation, case-study dialogs and form selectors; semantic 
 ## Publication
 
 The existing Site identity is stored in `.openai/hosting.json`. Reuse it for future versions. Do not create a second Site for edits. Keep the source state and deployment archive aligned. The Site starts owner-private; sharing settings are managed separately.
+
+## Vercel deployment
+
+The repository includes `vercel.json`, which selects the native Next.js build while leaving the Vinext/Cloudflare development workflow unchanged.
+
+In Vercel Project Settings, add the variables shown in `.env.example` for Production and Preview, then redeploy. Use a newly generated Resend key; never copy a key from Git history or commit one to the repository.
+
+Cloudflare D1/R2-backed content editing and case-study uploads are unavailable on Vercel until a Vercel-compatible database and object store are connected. The public portfolio, static case studies, admin master-key authentication and Resend contact email work with the Vercel build.

@@ -63,8 +63,8 @@ function toProject(row: ProjectRow): Project {
 }
 
 export async function GET(request: Request) {
+  if (!env.DB) return Response.json({ projects: [], canManage: await hasAdminAccess(request), storageAvailable: false });
   try {
-    if (!env.DB) throw new Error("Project database unavailable");
     const result = await env.DB.prepare("SELECT id,title,company,role,status,date,type,summary,problem,solution,workflow,technologies,screenshots,learnings,next_steps FROM portfolio_projects ORDER BY created_at DESC").all<ProjectRow>();
     return Response.json({ projects: (result.results || []).map(toProject), canManage: await hasAdminAccess(request) });
   } catch (error) {

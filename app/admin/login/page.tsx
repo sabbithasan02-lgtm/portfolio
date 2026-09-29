@@ -1,10 +1,37 @@
-'use client';
-import { useState, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { adminEmail } from "@/app/admin-auth";
 
-export default function AdminLogin() {
-  const router=useRouter();
-  const [message,setMessage]=useState('');
-  async function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();setMessage('Checking…');const form=new FormData(event.currentTarget);const response=await fetch('/api/admin-login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({key:form.get('key')})});const data=await response.json() as {error?:string};if(response.ok){router.replace('/admin');router.refresh();}else setMessage(data.error||'Login failed.');}
-  return <main className="admin-gate"><form className="admin-login" onSubmit={submit}><span>SECURE OWNER ACCESS</span><h1>Admin login</h1><p>Enter the portfolio master key, or use ChatGPT owner sign-in.</p><label>Master key<input name="key" type="password" required minLength={16} autoComplete="current-password" /></label><button type="submit">Open dashboard</button><a href="/signin-with-chatgpt?return_to=%2Fadmin">Sign in with ChatGPT</a><small aria-live="polite">{message}</small></form></main>;
+const messages: Record<string, string> = {
+  cancelled: "Google sign-in was cancelled.",
+  forbidden: "This Google account is not allowed to manage the portfolio.",
+  invalid_state: "The sign-in session expired. Please try again.",
+  not_configured: "Google login is not configured on the server yet.",
+  oauth_failed: "Google sign-in could not be completed. Please try again.",
+};
+
+export default async function AdminLogin({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const error = (await searchParams).error || "";
+  return (
+    <main className="admin-gate">
+      <section className="admin-login">
+        <span>SECURE OWNER ACCESS</span>
+        <h1>Admin login</h1>
+        <p>Continue with the approved Google account to open the dashboard.</p>
+        <a className="google-login" href="/api/auth/google">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.4-.18-2.07H12v3.92h5.38a4.6 4.6 0 0 1-2 3.02v2.55h3.24c1.9-1.75 2.98-4.32 2.98-7.42Z" />
+            <path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.62-2.35l-3.24-2.55c-.9.6-2.05.96-3.38.96-2.61 0-4.82-1.76-5.61-4.13H3.04v2.63A10 10 0 0 0 12 22Z" />
+            <path fill="#FBBC05" d="M6.39 13.93A6.03 6.03 0 0 1 6.07 12c0-.67.11-1.32.32-1.93V7.44H3.04A10 10 0 0 0 2 12c0 1.61.39 3.14 1.04 4.56l3.35-2.63Z" />
+            <path fill="#EA4335" d="M12 5.94c1.47 0 2.79.5 3.83 1.5l2.87-2.88A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.96 5.44l3.35 2.63C7.18 7.7 9.39 5.94 12 5.94Z" />
+          </svg>
+          Continue with Google
+        </a>
+        <small>Only {adminEmail()} is authorized.</small>
+        {error ? <p className="admin-login-error" role="alert">{messages[error] || "Login failed."}</p> : null}
+      </section>
+    </main>
+  );
 }

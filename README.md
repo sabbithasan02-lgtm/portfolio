@@ -73,4 +73,6 @@ The repository includes `vercel.json`, which selects the native Next.js build wh
 
 In Vercel Project Settings, add the variables shown in `.env.example` for Production and Preview, then redeploy. Use a newly generated Resend key; never copy a key from Git history or commit one to the repository.
 
-Cloudflare D1/R2-backed content editing and case-study uploads are unavailable on Vercel until a Vercel-compatible database and object store are connected. The public portfolio, static case studies, admin master-key authentication and Resend contact email work with the Vercel build.
+The admin dashboard uses Google OAuth instead of a shared master key. Create a Google OAuth 2.0 Web application, add the exact `GOOGLE_REDIRECT_URI` as an authorized redirect URI, and configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_SECRET`, `ADMIN_EMAIL`, and `GOOGLE_REDIRECT_URI`. Only the verified Google account matching `ADMIN_EMAIL` receives a signed admin session.
+
+Cloudflare D1/R2-backed content editing and case-study uploads are unavailable on Vercel until a Vercel-compatible database and object store are connected. The public portfolio, static case studies, Google admin authentication and Resend contact email work with the Vercel build.

@@ -6,7 +6,7 @@ import { defaultSiteContent, type SiteContent } from '@/data/site-content';
 import type { Project } from '@/data/projects';
 import CaseStudyManager from '@/app/case-study-manager';
 
-export default function AdminDashboard({ userEmail, signInUrl, signOutUrl }: { userEmail: string; signInUrl: string; signOutUrl: string }) {
+export default function AdminDashboard({ userEmail }: { userEmail: string }) {
   const [content, setContent] = useState<SiteContent>(defaultSiteContent);
   const [status, setStatus] = useState('Loading saved content…');
   const [projects, setProjects] = useState<Project[]>([]);
@@ -31,7 +31,7 @@ export default function AdminDashboard({ userEmail, signInUrl, signOutUrl }: { u
 
   return (
     <main className="admin-dashboard">
-      <header><div><span>PORTFOLIO ADMIN</span><h1>Content & SEO dashboard</h1><p>Signed in as {userEmail}</p></div><nav><Link href="/">View website</Link>{userEmail === 'Local development' ? <a href={signInUrl}>Test owner login</a> : <a href={signOutUrl}>Sign out</a>}</nav></header>
+      <header><div><span>PORTFOLIO ADMIN</span><h1>Content & SEO dashboard</h1><p>Signed in as {userEmail}</p></div><nav><Link href="/">View website</Link>{userEmail === 'Local development' ? <a href="/api/auth/google">Test Google login</a> : <a href="/api/auth/logout">Sign out</a>}</nav></header>
 
       <section><h2>Work</h2><label>Section heading<input value={content.work.heading} onChange={e => setContent({ ...content, work: { ...content.work, heading: e.target.value } })} /></label><label>Introduction<textarea rows={3} value={content.work.intro} onChange={e => setContent({ ...content, work: { ...content.work, intro: e.target.value } })} /></label><CaseStudyManager onCreated={project => setProjects(current => [project, ...current])} />{projects.map((project, index) => <ProjectEditor key={project.id} project={project} onChange={next => setProjects(current => current.map((item, i) => i === index ? next : item))} onDelete={() => setProjects(current => current.filter(item => item.id !== project.id))} />)}</section>
 

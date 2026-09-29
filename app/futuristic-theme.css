@@ -592,6 +592,87 @@ html, body { max-width: 100%; overflow-x: clip; }
     transform: translateX(-50%);
   }
 }
+
+/* Navigation alignment: the brand, links and contact action share one layer. */
+.smart-header .brand,
+.smart-header .nav,
+.smart-header .smart-contact {
+  box-sizing: border-box;
+  height: 52px;
+  min-height: 52px;
+  border: 1px solid rgba(241, 250, 255, .10);
+  background: rgba(4, 14, 22, .74);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .055), 0 8px 24px rgba(0, 0, 0, .20);
+}
+
+.smart-header .brand {
+  padding: 5px 16px 5px 5px;
+}
+
+.smart-header .nav {
+  align-items: center;
+}
+
+.smart-header .smart-contact .split-pill__badge {
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px;
+}
+
+/* Footer typography: readable sans-serif instead of tiny technical labels. */
+.footer,
+.footer-links,
+.footer-links a {
+  font-family: var(--font-sans);
+}
+
+.footer-links {
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 10px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--foreground-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.footer-links a:hover,
+.footer-links a:focus-visible {
+  color: var(--foreground);
+  background: rgba(255, 255, 255, .045);
+}
+
+.footer-bottom > span {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 760px) {
+  .smart-header .brand,
+  .smart-header .split-pill--menu {
+    height: 46px;
+    min-height: 46px;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
+    gap: 4px 6px;
+  }
+
+  .footer-links a {
+    padding-inline: 8px;
+  }
+}
 .smart-header.is-compact {
   width: min(760px, calc(100% - 40px));
   height: 60px;
@@ -1018,4 +1099,142 @@ html, body { max-width: 100%; overflow-x: clip; }
   .case-study-form-head,
   .case-study-fields.two-col { grid-template-columns: 1fr; gap: 16px; }
   .detail-screenshots { grid-template-columns: 1fr; }
+}
+
+/* Corporate typography and UX polish
+   The supplied reference uses a quiet, highly legible sans-serif system.
+   These overrides keep the portfolio's cyan identity while making its hierarchy
+   and interaction language feel calmer and more professional. */
+body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+h1, h2, h3, h4,
+.brand-name,
+.split-pill__label,
+.button {
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+p,
+.body-copy,
+.section-aside,
+.project-info > p,
+.service-card > p {
+  text-wrap: pretty;
+}
+
+.hero-copy h1 {
+  font-weight: 600;
+  line-height: .98;
+  letter-spacing: -.045em;
+}
+
+.section h2,
+.contact-copy h2,
+.toolkit h2 {
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -.035em;
+}
+
+.brand-name {
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.smart-header .nav {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.smart-header .nav a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0;
+}
+
+.section-label,
+.tiny-label,
+.eyebrow,
+.network-caption,
+.network-bottom,
+.project-art-bottom,
+.status-badge {
+  font-family: var(--font-mono);
+  letter-spacing: .13em;
+}
+
+.section-label,
+.tiny-label,
+.eyebrow {
+  font-size: max(10px, .68rem);
+  line-height: 1.5;
+}
+
+.body-copy,
+.section-aside,
+.project-info > p,
+.service-card > p,
+.log-row p,
+.contact-copy > p {
+  line-height: 1.75;
+}
+
+.button,
+.filters button,
+.text-button,
+.social-links a {
+  min-height: 44px;
+}
+
+.button,
+.split-pill__label {
+  letter-spacing: .035em;
+}
+
+.glass-card,
+.project-card,
+.skill-card,
+.radyan-feature,
+.contact-form,
+.service-dialog {
+  border-radius: 14px;
+}
+
+.service-card,
+.project-card {
+  text-align: left;
+}
+
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 5px rgba(34, 211, 238, .12);
+}
+
+@media (max-width: 760px) {
+  .hero-copy h1 {
+    letter-spacing: -.035em;
+  }
+
+  .section h2,
+  .contact-copy h2,
+  .toolkit h2 {
+    letter-spacing: -.025em;
+  }
+
+  .filters button {
+    min-height: 44px;
+    padding-inline: 14px;
+  }
 }

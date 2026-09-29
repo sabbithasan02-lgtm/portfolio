@@ -29,7 +29,7 @@ export default function SmartNavbar({ menu, setMenu }: { menu: boolean; setMenu:
     <header className={`header smart-header ${isAtTop ? 'at-top' : 'away-from-top'} ${compact ? 'is-compact' : ''} ${menu ? 'menu-open' : ''}`}>
       <a href="#home" className="brand" aria-label="Sabbit Ahamed, home">
         <Image className="brand-photo" src="/sabbit-ahamed-profile.png" alt="" aria-hidden="true" width={40} height={40} priority />
-        <span className="brand-name"><span className="brand-full">SABBIT AHAMED</span><span className="brand-short">SABBIT</span><span className="brand-dot">.</span></span>
+        <span className="brand-name"><span className="brand-full">Sabbit Ahamed</span><span className="brand-short">Sabbit</span><span className="brand-dot">.</span></span>
       </a>
       <nav aria-label="Main navigation" className={menu ? 'nav open' : 'nav'}>
         {links.map(([label, href]) => (

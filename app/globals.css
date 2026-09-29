@@ -7,6 +7,10 @@
    ============================================ */
 
 :root {
+  /* Typography - clean corporate sans inspired by the supplied reference */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
   /* Backgrounds - Near Black */
   --background: #02080D;
   --background-secondary: #03111B;
@@ -83,14 +87,16 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 100px;
+  scroll-padding-top: 124px;
 }
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -110,6 +116,10 @@ button, input, textarea, select {
   font: inherit;
 }
 
+button, a, input, textarea, select {
+  touch-action: manipulation;
+}
+
 button, a {
   -webkit-tap-highlight-color: transparent;
 }
@@ -120,6 +130,7 @@ button {
 
 p {
   margin: 0;
+  line-height: 1.7;
 }
 
 svg {
@@ -257,7 +268,7 @@ svg {
 }
 
 .eyebrow {
-  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -649,7 +660,7 @@ svg {
 }
 
 .tool-strip > b {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 18px;
   font-weight: 600;
   color: var(--foreground);
@@ -1227,7 +1238,7 @@ h3 {
 
 .experience-company {
   display: block;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 26px;
   font-weight: 600;
   letter-spacing: -0.5px;

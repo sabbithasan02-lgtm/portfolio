@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 
 const nodeLogos: Record<string, string> = {
@@ -52,7 +52,7 @@ const toolkitNodes: NetworkNode[] = [
 ];
 
 export default function Network({ toolkit = false }: { toolkit?: boolean }) {
-  const nodes = toolkit ? toolkitNodes : heroNodes;
+  const nodes = useMemo(() => toolkit ? toolkitNodes : heroNodes, [toolkit]);
 
   const ref = useRef<HTMLCanvasElement>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -156,7 +156,7 @@ export default function Network({ toolkit = false }: { toolkit?: boolean }) {
       resize.disconnect();
       io.disconnect();
     };
-  }, []);
+  }, [nodes]);
 
   return (
     <div className={`network hero-network ${toolkit ? 'toolkit-network' : ''}`} ref={box}>

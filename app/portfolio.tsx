@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
-  ArrowUpRight, ArrowDown, ArrowRight, Workflow, Menu, X,
-  GitBranch, Radio, MapPin, Sparkles, Braces, Webhook, Cog, Database,
+  ArrowUpRight, ArrowRight, Workflow, X,
+  GitBranch, Radio, Sparkles, Braces, Webhook, Cog, Database,
   FlaskConical, Check, Plus, Cpu, Zap, Link2, Target, Users, BarChart3, MessageSquare
 } from 'lucide-react';
 import Network from './network';
@@ -12,15 +12,13 @@ import SmartNavbar from './smart-navbar';
 import ContactForm from './contact-form';
 import ProjectDetail from './project-detail';
 import { profile } from '@/data/profile';
-import { primarySkills, skillGroups } from '@/data/skills';
+import { skillGroups } from '@/data/skills';
 import { projects, type Project } from '@/data/projects';
 import { radyan, radyanWorkflows } from '@/data/radyan';
 import { categories, changelog } from '@/data/changelog';
 import { lab, labInterests } from '@/data/lab';
 import { defaultSiteContent, type SiteContent } from '@/data/site-content';
 import type { EditableService } from '@/data/site-content';
-
-const skillIcons = [Workflow, Sparkles, GitBranch, Braces, Webhook, Cog, Database, Cpu];
 
 const steps = [
   ['Discover', 'Understand the business process and identify automation opportunities.'],
@@ -169,6 +167,25 @@ export default function Portfolio() {
       .then(data => { if (data.content) setSiteContent(data.content); })
       .catch(() => undefined);
   }, []);
+
+  /* Re-align direct section links after database content changes the page height. */
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const header = document.querySelector<HTMLElement>('.smart-header');
+      const offset = (header?.getBoundingClientRect().height || 72) + 32;
+      const previousBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo(0, Math.max(0, target.offsetTop - offset));
+      document.documentElement.style.scrollBehavior = previousBehavior;
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [uploadedProjects.length, siteContent]);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -330,7 +347,7 @@ export default function Portfolio() {
             </p>
             <div className="about-stats">{(siteContent.about.metrics || defaultSiteContent.about.metrics).map(metric => <div key={metric.label}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}</div>
             <a className="text-button" href="#radyan">
-              See what I'm building <ArrowUpRight size={18} />
+              See what I’m building <ArrowUpRight size={18} />
             </a>
           </div>
         </section>
@@ -385,14 +402,14 @@ export default function Portfolio() {
               <p>{radyan.details}</p>
               <div className="radyan-links">
                 <button className="text-button" onClick={() => setDetail(projects.find(p => p.id === 'radyan') || null)}>
-                  See What I'm Building <ArrowUpRight size={17} />
+                  See What I’m Building <ArrowUpRight size={17} />
                 </button>
                 <a href={radyan.url} target="_blank" rel="noreferrer" className="muted-link">radyanbd.com ↗</a>
               </div>
             </div>
           </div>
           <div className="subsection-heading">
-            <h3>What I'm Building at Radyan</h3>
+            <h3>What I’m Building at Radyan</h3>
             <span className="tiny-label">AN ONGOING AUTOMATION CASE STUDY</span>
           </div>
           {radyanWorkflows.length > 0 ? (
@@ -402,7 +419,7 @@ export default function Portfolio() {
               <GitBranch size={21} />
               <div>
                 <h4>Work in progress. Documentation, too.</h4>
-                <p>I'm building and improving real operational workflows. Individual systems, architecture and approved screenshots will appear here as I document the work.</p>
+                <p>I’m building and improving real operational workflows. Individual systems, architecture and approved screenshots will appear here as I document the work.</p>
               </div>
               <span className="tag">ONGOING</span>
             </div>
@@ -423,7 +440,7 @@ export default function Portfolio() {
                 </div>
                 <div className="metrics-note">
                   <span className="status-dot" /> Tracking in progress
-                  <span>Verified results will be published as they're measured.</span>
+                  <span>Verified results will be published as they’re measured.</span>
                 </div>
               </>
             )}
@@ -527,7 +544,7 @@ export default function Portfolio() {
         {/* ===== WHY AUTOMATION ===== */}
         <section className="wrap section why-automation reveal-target">
           <h2>
-            Manual work doesn't scale.<br />
+            Manual work doesn’t scale.<br />
             <span className="coral">Systems do.</span>
           </h2>
           <div className="why-grid">
@@ -554,7 +571,7 @@ export default function Portfolio() {
           <div className="section-head">
             <div>
               <div className="section-label">09 / THE BUILDING LOG</div>
-              <h2>What I'm Building<span className="coral">.</span></h2>
+              <h2>What I’m Building<span className="coral">.</span></h2>
             </div>
             <span className="tiny-label">A LIVING ENGINEERING CHANGELOG</span>
           </div>
@@ -599,7 +616,7 @@ export default function Portfolio() {
             <div className="project-grid">{lab.map((p, i) => <ProjectCard key={p.id} project={p} index={i} onOpen={setDetail} />)}</div>
           ) : (
             <div className="lab-space">
-              <div className="tiny-label">AREAS I'M EXPLORING</div>
+              <div className="tiny-label">AREAS I’M EXPLORING</div>
               <div className="lab-topics">
                 {labInterests.map((x, i) => (
                   <span key={x}>
@@ -618,8 +635,8 @@ export default function Portfolio() {
         <section className="wrap section contact-cta reveal-target">
           <h2>
             Have a process that<br />
-            shouldn't be manual?<br />
-            <span className="coral">Let's turn it into a system.</span>
+            shouldn’t be manual?<br />
+            <span className="coral">Let’s turn it into a system.</span>
           </h2>
           <a href="#contact" className="button primary cta-button">
             Start a Conversation <ArrowUpRight size={18} />
@@ -629,8 +646,8 @@ export default function Portfolio() {
         {/* ===== CONTACT SECTION ===== */}
         <section className="wrap section contact-section reveal-target" id="contact">
           <div className="contact-copy">
-            <div className="section-label">LET'S CONNECT</div>
-            <h2>Let's automate<br /><span className="coral">something useful.</span></h2>
+            <div className="section-label">LET’S CONNECT</div>
+            <h2>Let’s automate<br /><span className="coral">something useful.</span></h2>
             <p className="body-copy">
               If you have a repetitive process, disconnected tools or a workflow that takes
               too much manual effort, I can help turn it into an automated system.
@@ -654,7 +671,7 @@ export default function Portfolio() {
       {/* ===== FOOTER ===== */}
       <footer className="wrap footer">
         <div className="footer-top">
-          <a className="brand" href="#home">SABBIT AHAMED<span className="brand-dot">.</span></a>
+          <a className="brand" href="#home">Sabbit Ahamed<span className="brand-dot">.</span></a>
           <p>Automation Engineer building intelligent systems for modern businesses.</p>
           <span>Building systems that<br />remove repetitive work.</span>
         </div>
@@ -681,6 +698,8 @@ function ProjectCard({ project: p, index, onOpen }: { project: Project; index: n
   return (
     <button className="project-card" onClick={() => onOpen(p)}>
       <div className={`project-art ${cover ? 'project-art--screenshot' : ''}`}>
+        {/* Uploaded project media can be local R2 paths or arbitrary remote URLs. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         {cover ? <img className="project-cover" src={cover.src} alt={cover.alt} loading="lazy" /> : null}
         <div className="project-art-overlay">
           <div className="tiny-label">SYSTEM {String(index + 1).padStart(2, '0')} / {p.company || 'INDEPENDENT'}</div>

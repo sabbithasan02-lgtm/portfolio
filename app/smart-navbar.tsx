@@ -31,13 +31,14 @@ export default function SmartNavbar({ menu, setMenu }: { menu: boolean; setMenu:
         <Image className="brand-photo" src="/sabbit-ahamed-profile.png" alt="" aria-hidden="true" width={40} height={40} priority />
         <span className="brand-name"><span className="brand-full">Sabbit Ahamed</span><span className="brand-short">Sabbit</span><span className="brand-dot">.</span></span>
       </a>
-      <nav aria-label="Main navigation" className={menu ? 'nav open' : 'nav'}>
+      <nav id="main-navigation" aria-label="Main navigation" className={menu ? 'nav open' : 'nav'}>
         {links.map(([label, href]) => (
           <a onClick={() => setMenu(false)} href={href} key={label}>{label}</a>
         ))}
+        <a className="mobile-contact-link" onClick={() => setMenu(false)} href="#contact">Contact</a>
       </nav>
       <SplitPill href="#contact" className="split-pill--header smart-contact" icon={<ArrowUpRight />}>Contact</SplitPill>
-      <SplitPill className="split-pill--menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} onClick={() => setMenu(!menu)} icon={menu ? <X /> : <Menu />}>{menu ? 'Close' : 'Menu'}</SplitPill>
+      <SplitPill className="split-pill--menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} aria-controls="main-navigation" onClick={() => setMenu(!menu)} icon={menu ? <X /> : <Menu />}>{menu ? 'Close' : 'Menu'}</SplitPill>
     </header>
   );
 }

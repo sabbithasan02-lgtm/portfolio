@@ -1176,6 +1176,8 @@ p,
     width: auto;
     max-width: none;
     max-height: calc(100dvh - 100px);
+    height: auto;
+    min-height: 0;
     overflow-y: auto;
     padding: 12px;
     gap: 4px;

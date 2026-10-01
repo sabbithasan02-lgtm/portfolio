@@ -136,7 +136,9 @@ export async function createAdminSessionCookie(
     expiresAt: now + 8 * 60 * 60,
   };
   const payload = base64Url(new TextEncoder().encode(JSON.stringify(session)));
-  return cookie(ADMIN_SESSION_COOKIE, `${payload}.${await signature(payload)}`, request, 8 * 60 * 60, "Strict");
+  // OAuth returns through a cross-site top-level redirect. Lax allows the
+  // new session on that redirect while excluding cross-site POST requests.
+  return cookie(ADMIN_SESSION_COOKIE, `${payload}.${await signature(payload)}`, request, 8 * 60 * 60, "Lax");
 }
 
 export async function getAdminSession(request: Request): Promise<AdminSession | null> {
